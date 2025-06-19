@@ -11,9 +11,18 @@ router = APIRouter(prefix="/reservations", tags=["reservations"])
 
 
 @router.post("/", response_model=ReservationOut, status_code=status.HTTP_201_CREATED)
-def create_reservation(payload: ReservationCreate, db: Session = Depends(get_db)):
-    """Create a new reservation."""
-    return crud_reservation.create(db, payload)
+def create_reservation(
+    payload: ReservationCreate,
+    db: Session = Depends(get_db),
+    current_user: Customer = Depends(get_current_user),
+):
+    """Create a new reservation for the authenticated user."""
+    try:
+        return crud_reservation.create_with_seat_update(
+            db=db, reservation_in=payload, cno=current_user.cno
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/{reservation_id}", response_model=ReservationOut)
@@ -28,19 +37,19 @@ def read_reservation(
     return db_obj
 
 
-@router.delete("/{reservation_id}", response_model=ReservationOut)
+@router.delete("/{reservation_id}", status_code=204)
 def delete_reservation(
     reservation_id: int,
     db: Session = Depends(get_db),
     current_user: Customer = Depends(get_current_user),
 ):
-    """Cancel (delete) a reservation."""
-    db_reservation = crud_reservation.get(db, reservation_id)
-    if db_reservation is None:
-        raise HTTPException(status_code=404, detail="Reservation not found")
-    if db_reservation.cno != current_user.cno:
-        raise HTTPException(status_code=403, detail="Not authorized to delete this reservation")
+    """Cancel a reservation and move it to the Cancel table."""
+    try:
+        crud_reservation.cancel_and_move(
+            db=db, rno=reservation_id, cno=current_user.cno
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
-    deleted = crud_reservation.remove(db, reservation_id)
-    return deleted
+    return
 

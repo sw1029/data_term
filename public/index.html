@@ -75,7 +75,7 @@ form.addEventListener("submit", async e => {
         <td>${row.seatClass}</td>
         <td>${fmtMoney(row.price)}</td>
         <td>${row.remaining}</td>
-        <td><button data-flight-no="${row.flightNo}" data-dep="${row.departureDateTime}" class="btn-primary">선택</button></td>
+        <td><button data-flight-no="${row.flightNo}" data-dep="${row.departureDateTime}" data-class="${row.seatClass}" class="btn-primary">선택</button></td>
       </tr>`;
     }).join("");
     resultSec.style.display = "block";
@@ -83,12 +83,35 @@ form.addEventListener("submit", async e => {
 });
 
 /* “선택” → 예약 페이지 이동 */
-resultBody.addEventListener("click", e=>{
-  if (e.target.tagName!=="BUTTON") return;
+// "선택" 버튼 클릭 시 호출될 예약 함수
+async function reserveFlight(flightNo, depDt, seatClass) {
+  if (!confirm(`[${flightNo}/${seatClass}] 항공편을 예약하시겠습니까?`)) return;
+
+  const payload = {
+    flight_no: flightNo,
+    dep_dt: depDt,
+    seat_class: seatClass,
+  };
+
+  try {
+    await apiFetch('/api/reservations', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    alert('예약이 성공적으로 완료되었습니다.');
+    window.location.href = 'mypage.html';
+  } catch (err) {
+    console.error('Reservation failed:', err);
+    alert(`예약에 실패했습니다: ${err.message}`);
+  }
+}
+
+resultBody.addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
   const flightNo = e.target.dataset.flightNo;
   const dep = e.target.dataset.dep;
-  // 실제 앱이라면 예약번호를 만들면서 서버에 POST하고 예약코드 반환
-  location.href = `mypage.html?code=${flightNo}_${dep}`;   // 데모용
+  const seatClass = e.target.dataset.class;
+  reserveFlight(flightNo, dep, seatClass);
 });
 </script>
 </body></html>

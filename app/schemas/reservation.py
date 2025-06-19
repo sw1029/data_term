@@ -2,11 +2,9 @@ from datetime import datetime
 from pydantic import BaseModel
 
 class ReservationCreate(BaseModel):
-    flightNo: str
-    departureDateTime: datetime
-    seatClass: str
-    cno: int
-    payment: float
+    flight_no: str
+    dep_dt: datetime
+    seat_class: str
 
 class ReservationOut(BaseModel):
     reservationId: int
