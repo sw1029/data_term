@@ -141,7 +141,7 @@ $ gunicorn -k uvicorn.workers.UvicornWorker app.main:app -b 0.0.0.0:8000 --worke
 
 ```bash
 $ cd frontend
-$ python -m http.server 3000   # http://localhost:3000/pages/search.html
+$ python -m http.server 3000   # http://localhost:3000/index.html
 ```
 
 esbuild를 사용한다면:
