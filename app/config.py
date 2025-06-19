@@ -1,4 +1,3 @@
-# 환경 설정값을 관리하는 모듈입니다.
 # app/config.py
 from functools import lru_cache
 from pydantic_settings import BaseSettings
@@ -10,6 +9,8 @@ class Settings(BaseSettings):
     oracle_dsn: str = Field(..., env="ORACLE_DSN")  # host:port/service_name
     jwt_secret: str = Field(..., env="JWT_SECRET")
     jwt_alg: str = "HS256"
+    app_env: str = Field(..., env="APP_ENV")
+    admin_email: str = Field(..., env="ADMIN_EMAIL")
 
     class Config:
         env_file = ".env"

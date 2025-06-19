@@ -26,7 +26,12 @@ export async function apiFetch(url, opts = {}) {
   const token = localStorage.getItem("access_token");
   const headers = { "Content-Type": "application/json", ...(opts.headers || {}) };
   if (token) headers["Authorization"] = `Bearer ${token}`;
-  const res = await fetch(url, { ...opts, headers });
+
+  // 백엔드 API의 기본 URL을 추가
+  const backendBaseUrl = "http://localhost:8000"; // 또는 http://127.0.0.1:8000
+  const fullUrl = backendBaseUrl + url; // 요청 URL을 백엔드 기본 URL과 결합
+
+  const res = await fetch(fullUrl, { ...opts, headers }); // 수정된 부분
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }

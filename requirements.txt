@@ -7,3 +7,4 @@ passlib[bcrypt]
 python-jose[cryptography] # JWT
 pydantic[email]
 pydantic-settings
+gunicorn
