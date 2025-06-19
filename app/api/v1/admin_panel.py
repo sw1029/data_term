@@ -1,6 +1,7 @@
 # app/api/v1/admin_panel.py
-from fastapi import APIRouter, Depends, Path, Query
+from fastapi import APIRouter, Depends, Path, Query, HTTPException, Response, status
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from app.database import get_db
 from app.core.auth_deps import admin_required
@@ -35,3 +36,22 @@ def bulk_update_seat_price(
 ):
     updated = crud_seat.adjust_price(db, flight_no, dep_dt, percentage)
     return {"updated_rows": updated}
+
+
+@router.delete(
+    "/flights/{flight_no}/{dep_dt}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_flight(
+    flight_no: str,
+    dep_dt: str,
+    db: Session = Depends(get_db),
+):
+    """Delete a flight identified by flight number and departure datetime."""
+    dep_dt_parsed = datetime.fromisoformat(dep_dt)
+    deleted = crud_flight.remove_by_flight_no_and_dt(
+        db, flight_no=flight_no, dep_dt=dep_dt_parsed
+    )
+    if not deleted:
+        raise HTTPException(status_code=404, detail="해당 항공편을 찾을 수 없습니다.")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
