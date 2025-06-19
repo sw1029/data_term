@@ -22,7 +22,10 @@ export function renderNav(isAdmin = false) {
 
 /* 단순 fetch 래퍼 (JSON) */
 export async function apiFetch(url, opts = {}) {
-  const res = await fetch(url, { ...opts, headers: { "Content-Type":"application/json", ...(opts.headers||{}) }});
+  const token = localStorage.getItem("access_token");
+  const headers = { "Content-Type": "application/json", ...(opts.headers || {}) };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(url, { ...opts, headers });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }

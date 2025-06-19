@@ -2,13 +2,13 @@
 from fastapi import APIRouter, Depends, Path, Query
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db
+from app.database import get_db
 from app.core.auth_deps import admin_required
 from app.crud import flight as crud_flight, seat as crud_seat, customer as crud_customer
 from app.schemas.flight import FlightOut
 from app.schemas.customer import CustomerOut
 
-router = APIRouter(prefix="/admin/panel", tags=["admin-panel"], dependencies=[Depends(admin_required)])
+router = APIRouter(prefix="/admin", tags=["admin-panel"], dependencies=[Depends(admin_required)])
 
 # 예시 1: 특정 승객 강제 삭제
 @router.delete("/customers/{cno}", status_code=204)
