@@ -4,9 +4,7 @@ from pydantic_settings import BaseSettings
 from pydantic import Field
 
 class Settings(BaseSettings):
-    oracle_user: str = Field(..., env="ORACLE_USER")
-    oracle_password: str = Field(..., env="ORACLE_PASSWORD")
-    oracle_dsn: str = Field(..., env="ORACLE_DSN")  # host:port/service_name
+    sqlite_path: str = Field("data.db", env="SQLITE_PATH")
     jwt_secret: str = Field(..., env="JWT_SECRET")
     jwt_alg: str = "HS256"
     app_env: str = Field(..., env="APP_ENV")
