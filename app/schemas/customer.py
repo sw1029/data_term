@@ -13,4 +13,4 @@ class CustomerCreate(CustomerBase):
 class CustomerOut(CustomerBase):
     cno: int
     class Config:
-        orm_mode = True
+        from_attributes = True

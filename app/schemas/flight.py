@@ -9,7 +9,7 @@ class SeatOut(BaseModel):
     no_of_seats: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class FlightOut(BaseModel):
     airline: str
@@ -21,4 +21,4 @@ class FlightOut(BaseModel):
     seats: List[SeatOut] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True

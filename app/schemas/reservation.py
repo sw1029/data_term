@@ -17,4 +17,4 @@ class ReservationOut(BaseModel):
     reserveDateTime: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
