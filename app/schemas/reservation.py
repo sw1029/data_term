@@ -9,6 +9,7 @@ class ReservationCreate(BaseModel):
     payment: float
 
 class ReservationOut(BaseModel):
+    reservationId: int
     flightNo: str
     departureDateTime: datetime
     seatClass: str

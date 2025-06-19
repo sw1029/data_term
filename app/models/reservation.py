@@ -1,17 +1,26 @@
 from __future__ import annotations
 
 from datetime import datetime
-from sqlalchemy import String, DateTime, Integer, Numeric, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import (
+    String,
+    DateTime,
+    Integer,
+    Numeric,
+    ForeignKey,
+    ForeignKeyConstraint,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 class Reserve(Base):
     __tablename__ = "Reserve"
 
-    flightNo: Mapped[str] = mapped_column(String(20), primary_key=True)
-    departureDateTime: Mapped[datetime] = mapped_column(DateTime, primary_key=True)
-    seatClass: Mapped[str] = mapped_column(String(20), primary_key=True)
-    cno: Mapped[int] = mapped_column(ForeignKey("Customer.cno"), primary_key=True)
+    reservationId: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    flightNo: Mapped[str] = mapped_column(String(20))
+    departureDateTime: Mapped[datetime] = mapped_column(DateTime)
+    seatClass: Mapped[str] = mapped_column(String(20))
+    cno: Mapped[int] = mapped_column(ForeignKey("Customer.cno"))
     payment: Mapped[float] = mapped_column(Numeric)
     reserveDateTime: Mapped[datetime] = mapped_column(DateTime)
 
@@ -20,6 +29,7 @@ class Reserve(Base):
             ["flightNo", "departureDateTime", "seatClass"],
             ["Seats.flightNo", "Seats.departureDateTime", "Seats.seatClass"],
         ),
+        UniqueConstraint("flightNo", "departureDateTime", "seatClass", "cno"),
     )
 
     customer: Mapped["Customer"] = relationship("Customer")
