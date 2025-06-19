@@ -28,7 +28,8 @@ export async function apiFetch(url, opts = {}) {
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   // 백엔드 API의 기본 URL을 추가
-  const backendBaseUrl = "http://localhost:8000"; // 또는 http://127.0.0.1:8000
+  // 기본 URL은 window.API_BASE_URL 전역 변수를 사용하고, 없으면 localhost를 사용합니다.
+  const backendBaseUrl = window.API_BASE_URL || "http://localhost:8000"; // 또는 http://127.0.0.1:8000
   const fullUrl = backendBaseUrl + url; // 요청 URL을 백엔드 기본 URL과 결합
 
   const res = await fetch(fullUrl, { ...opts, headers }); // 수정된 부분
