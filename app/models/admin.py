@@ -1,3 +1,4 @@
+# 관리자 테이블에 매핑되는 SQLAlchemy 모델입니다.
 # app/models/admin.py
 from sqlalchemy import String, Integer, Boolean
 from sqlalchemy.orm import Mapped, mapped_column

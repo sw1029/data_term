@@ -1,3 +1,4 @@
+# 일반 사용자 인증을 담당하는 라우터 모듈입니다.
 # app/api/v1/user_auth.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session

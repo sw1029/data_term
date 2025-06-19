@@ -1,3 +1,4 @@
+# 고객 정보 관리 API를 정의합니다.
 # app/api/v1/customer.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session

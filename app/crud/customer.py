@@ -1,3 +1,4 @@
+# 고객 관련 CRUD 함수를 정의합니다.
 # app/crud/customer.py
 from sqlalchemy.orm import Session
 from app.models.customer import Customer

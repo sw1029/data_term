@@ -1,3 +1,4 @@
+# FastAPI 애플리케이션의 엔트리 포인트입니다.
 # app/main.py
 from fastapi import FastAPI
 from app.api.v1 import (

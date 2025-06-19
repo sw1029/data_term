@@ -1,3 +1,4 @@
+# 고객 정보를 저장하는 SQLAlchemy 모델입니다.
 # app/models/customer.py
 from sqlalchemy import String, Number
 from sqlalchemy.orm import Mapped, mapped_column

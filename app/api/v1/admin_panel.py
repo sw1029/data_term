@@ -1,3 +1,4 @@
+# 관리자 전용 기능을 제공하는 API 라우터입니다.
 # app/api/v1/admin_panel.py
 from fastapi import APIRouter, Depends, Path, Query, HTTPException, Response, status
 from sqlalchemy.orm import Session

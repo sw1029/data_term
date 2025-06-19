@@ -1,3 +1,4 @@
+# 예약 관련 API 엔드포인트를 정의합니다.
 from fastapi import APIRouter, Path, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 

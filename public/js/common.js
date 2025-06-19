@@ -1,3 +1,4 @@
+// 네비게이션 관련 공통 함수를 정의합니다.
 /* 공통 네비게이션 출력 */
 export function renderNav(isAdmin = false) {
   const nav = document.querySelector("nav");

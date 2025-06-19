@@ -1,3 +1,4 @@
+# 예약 생성 및 조회에 사용되는 스키마입니다.
 from datetime import datetime
 from pydantic import BaseModel
 
