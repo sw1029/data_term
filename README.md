@@ -113,6 +113,7 @@ $ touch .env   # 아래 표를 참고해 값을 입력
 | `SQLITE_PATH` | `./data.db` | 생성될 SQLite 파일 경로 |
 | `JWT_SECRET` | `example_secret` | 액세스 토큰 서명용 256비트 비밀 값 |
 | `ADMIN_EMAIL` | `admin@c‑air.io` | 기본 관리자 계정 이메일 |
+| `ALLOW_ORIGINS` | `http://localhost:3000` | 허용할 프론트엔드 오리진(콤마 구분) |
 
 더 많은 설정 항목은 `app/config.py`에서 확인할 수 있습니다.
 
