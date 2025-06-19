@@ -42,7 +42,7 @@
 | --- | --- |
 | 프론트엔드 | 프레임워크 없이 기본 HTML/CSS/JS와 Fetch API 사용, 필요 시 React로 확장 가능. |
 | 백엔드 | Python 3.10, FastAPI(APIRouter), SQLAlchemy 2 ORM, python-jose 인증. |
-| 데이터베이스 | Oracle 19c(on‑prem 또는 ATP). |
+| 데이터베이스 | SQLite 3 파일 DB. |
 | 개발 도구 | Pip + virtualenv, gunicorn, nginx(프로덕션), GitHub Actions(CI), pre-commit 훅(Black, Ruff). |
 | 테스트 | pytest, pytest-cov, Playwright(e2e). |
 
@@ -81,9 +81,8 @@ data_term/
 
 ## 사전 준비
 
-* **Oracle Instant Client 21.11** 이상을 설치하고 `PATH` / `LD_LIBRARY_PATH`에 추가합니다.
 * **Python 3.10 이상**(3.12 검증 완료).
-* `backend/migrations/versions/0_ddl.sql` 스키마가 적용된 **Oracle DB 19c** 인스턴스가 실행 중이어야 합니다.
+* 로컬에서 SQLite를 사용하므로 별도의 DB 설치가 필요하지 않습니다.
 * 자산을 esbuild로 번들링하려면 Node 18 이상이 필요합니다.
 
 ---
@@ -111,9 +110,7 @@ $ touch .env   # 아래 표를 참고해 값을 입력
 | 변수 | 예시 | 설명 |
 | --- | --- | --- |
 | `APP_ENV` | `development` | 애플리케이션 모드 |
-| `ORACLE_DSN` | `localhost:1521/FREEPDB1` | 전체 DSN 또는 EZConnect 문자열 |
-| `ORACLE_USER` | `CAIR_APP` | 애플리케이션용 DB 사용자 |
-| `ORACLE_PASSWORD` | `secret_pw` | 위 사용자 비밀번호 |
+| `SQLITE_PATH` | `./data.db` | 생성될 SQLite 파일 경로 |
 | `JWT_SECRET` | `example_secret` | 액세스 토큰 서명용 256비트 비밀 값 |
 | `ADMIN_EMAIL` | `admin@c‑air.io` | 기본 관리자 계정 이메일 |
 
@@ -155,11 +152,9 @@ $ npm run dev                  # esbuild-serve 실시간 리로드
 
 | 단계 | 명령 |
 | --- | --- |
-| 새 버전 생성 | `flask db migrate -m "Add loyalty tier"` |
-| DB 적용 | `flask db upgrade` |
-| 롤백 | `flask db downgrade` |
+| 데이터베이스 생성 | `python init_sqlite.py` |
 
-기본 DDL은 `/docs/db‑schema.md`에 있는 스키마와 일치합니다.
+예제 데이터는 `example.sql`을 파싱하여 SQLite로 삽입됩니다.
 
 ---
 
