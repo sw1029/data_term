@@ -1,33 +1,46 @@
-from fastapi import APIRouter, Path, status
+from fastapi import APIRouter, Path, status, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.crud import reservation as crud_reservation
+from app.schemas.reservation import ReservationCreate, ReservationOut
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
 
-_demo_reservation = {
-    "code": "ABC123456789",
-    "createdAt": "2025-01-01T12:00:00",
-    "customerName": "Demo User",
-    "cno": 1,
-    "price": 120000,
-    "status": "CONFIRMED",
-    "seatClass": "Economy",
-    "seatPrice": 120000,
-    "flight": {
-        "flightNo": "SA100",
-        "airline": "Sample Air",
-        "from": "ICN",
-        "to": "JFK",
-        "departureTime": "2025-01-10T08:00:00",
-        "arrivalTime": "2025-01-10T10:30:00",
-    },
-}
 
-@router.get("/{code}")
-def read_reservation(code: str = Path(...)):
-    """Return a demo reservation."""
-    return _demo_reservation | {"code": code}
+@router.post("/", response_model=ReservationOut, status_code=status.HTTP_201_CREATED)
+def create_reservation(payload: ReservationCreate, db: Session = Depends(get_db)):
+    """Create a new reservation."""
+    return crud_reservation.create(db, payload)
 
-@router.delete("/{code}", status_code=status.HTTP_204_NO_CONTENT)
-def cancel_reservation(code: str = Path(...)):
-    """Pretend to cancel a reservation."""
+
+@router.get("/{flight_no}/{dep_dt}/{seat_class}/{cno}", response_model=ReservationOut)
+def read_reservation(
+    flight_no: str = Path(...),
+    dep_dt: str = Path(...),
+    seat_class: str = Path(...),
+    cno: int = Path(...),
+    db: Session = Depends(get_db),
+):
+    """Fetch a reservation by composite key."""
+    db_obj = crud_reservation.get(db, flight_no, dep_dt, seat_class, cno)
+    if not db_obj:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    return db_obj
+
+
+@router.delete("/{flight_no}/{dep_dt}/{seat_class}/{cno}", status_code=status.HTTP_204_NO_CONTENT)
+def cancel_reservation(
+    flight_no: str = Path(...),
+    dep_dt: str = Path(...),
+    seat_class: str = Path(...),
+    cno: int = Path(...),
+    db: Session = Depends(get_db),
+):
+    """Cancel (delete) a reservation."""
+    obj = crud_reservation.get(db, flight_no, dep_dt, seat_class, cno)
+    if obj:
+        db.delete(obj)
+        db.commit()
     return
 
