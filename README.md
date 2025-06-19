@@ -140,9 +140,12 @@ $ gunicorn -k uvicorn.workers.UvicornWorker app.main:app -b 0.0.0.0:8000 --worke
 ### 프론트엔드(정적 서비스)
 
 ```bash
-$ cd frontend
+$ cd public
 $ python -m http.server 3000   # http://localhost:3000/index.html
 ```
+
+> 필요하면 `<script>window.API_BASE_URL="http://localhost:8000";</script>`를
+> HTML 상단에 추가해 백엔드 주소를 조정할 수 있습니다.
 
 esbuild를 사용한다면:
 
