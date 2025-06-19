@@ -42,7 +42,7 @@ const admTblBody = document.querySelector("#admTbl tbody");
 const seatTbl    = document.getElementById("seatTbl");
 const seatHdr    = document.getElementById("seatHdr");
 const seatTBody  = seatTbl.querySelector("tbody");
-let currentFlightId;
+let currentFlight;
 
 document.getElementById("admSearch").addEventListener("submit", async e=>{
   e.preventDefault();
@@ -50,10 +50,10 @@ document.getElementById("admSearch").addEventListener("submit", async e=>{
   try {
     const rows = await apiFetch(`/api/admin/flights?${qs}`); // ★
     admTblBody.innerHTML = rows.map(r=>`
-      <tr data-id="${r.id}">
+      <tr data-flight-no="${r.flightNo}" data-dep-dt="${r.departureDateTime}">
         <td>${r.airline}</td><td>${r.flightNo}</td>
-        <td>${r.from} ${fmtDateTime(r.departureTime)}</td>
-        <td>${r.to} ${fmtDateTime(r.arrivalTime)}</td>
+        <td>${r.departureAirport} ${fmtDateTime(r.departureDateTime)}</td>
+        <td>${r.arrivalAirport} ${fmtDateTime(r.arrivalDateTime)}</td>
         <td><button class="btn-primary btn-seat">관리</button></td>
         <td><button class="btn-primary">수정</button></td>
         <td><button class="btn-danger  btn-del">삭제</button></td>
@@ -65,25 +65,26 @@ document.getElementById("admSearch").addEventListener("submit", async e=>{
 admTblBody.addEventListener("click", async e=>{
   const tr = e.target.closest("tr");
   if (!tr) return;
-  const id = tr.dataset.id;
+  const flightNo = tr.dataset.flightNo;
+  const depDt = tr.dataset.depDt;
   if (e.target.classList.contains("btn-seat")) {
-    currentFlightId = id;
-    loadSeats(id, tr.children[1].textContent);
+    currentFlight = { flightNo, depDt };
+    loadSeats(flightNo, depDt, tr.children[1].textContent);
   } else if (e.target.classList.contains("btn-del")) {
     if (confirm("삭제하시겠습니까?"))
-      await apiFetch(`/api/admin/flights/${id}`, { method:"DELETE" }); // ★
+      await apiFetch(`/api/admin/flights/${flightNo}/${depDt}`, { method:"DELETE" });
     tr.remove();
   }
 });
 
-async function loadSeats(flightId, flightNo) {
-  seatHdr.textContent = `${flightNo} 좌석 클래스 관리`;
+async function loadSeats(flightNo, depDt, flightNoDisplay) {
+  seatHdr.textContent = `${flightNoDisplay} 좌석 클래스 관리`;
   seatHdr.style.display = seatTbl.style.display = "block";
   document.getElementById("btnAddSeat").style.display = "inline-block";
-  const seats = await apiFetch(`/api/admin/flights/${flightId}/seats`); // ★
+  const seats = await apiFetch(`/api/admin/flights/${flightNo}/${depDt}/seats`);
   seatTBody.innerHTML = seats.map(s=>`
-    <tr data-id="${s.id}">
-      <td>${s.class}</td><td>${fmtMoney(s.price)}</td><td>${s.total}</td>
+    <tr data-id="${s.seatClass}">
+      <td>${s.seatClass}</td><td>${fmtMoney(s.price)}</td><td>${s.no_of_seats}</td>
       <td><button class="btn-primary">수정</button></td>
       <td><button class="btn-danger btn-seat-del">삭제</button></td>
     </tr>`).join("");
@@ -92,7 +93,7 @@ async function loadSeats(flightId, flightNo) {
 seatTBody.addEventListener("click", async e=>{
   if (!e.target.classList.contains("btn-seat-del")) return;
   const row = e.target.closest("tr");
-  await apiFetch(`/api/admin/flights/${currentFlightId}/seats/${row.dataset.id}`, { method:"DELETE" });
+  await apiFetch(`/api/admin/flights/${currentFlight.flightNo}/${currentFlight.depDt}/seats/${row.dataset.id}`, { method:"DELETE" });
   row.remove();
 });
 </script>

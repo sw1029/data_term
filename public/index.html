@@ -61,18 +61,23 @@ form.addEventListener("submit", async e => {
       `${fd.get("from")} → ${fd.get("to")} ${fd.get("depDate")}` +
       (fd.get("retDate") ? `~${fd.get("retDate")}`:"") +
       ` 성인${fd.get("adult")} ${fd.get("cls")||"전체"}`;
-    resultBody.innerHTML = data.map(row => `
+    resultBody.innerHTML = data.map(row => {
+      const dep = new Date(row.departureDateTime);
+      const arr = new Date(row.arrivalDateTime);
+      const durH = ((arr - dep) / 3600000).toFixed(1);
+      return `
       <tr>
         <td>${row.airline}</td>
         <td>${row.flightNo}</td>
-        <td>${row.departureTime}</td>
-        <td>${row.arrivalTime}</td>
-        <td>${row.duration}</td>
+        <td>${dep.toLocaleString()}</td>
+        <td>${arr.toLocaleString()}</td>
+        <td>${durH}h</td>
         <td>${row.seatClass}</td>
         <td>${fmtMoney(row.price)}</td>
         <td>${row.remaining}</td>
-        <td><button data-id="${row.flightId}" class="btn-primary">선택</button></td>
-      </tr>`).join("");
+        <td><button data-flight-no="${row.flightNo}" data-dep="${row.departureDateTime}" class="btn-primary">선택</button></td>
+      </tr>`;
+    }).join("");
     resultSec.style.display = "block";
   } catch(err) { alert(err.message); }
 });
@@ -80,9 +85,10 @@ form.addEventListener("submit", async e => {
 /* “선택” → 예약 페이지 이동 */
 resultBody.addEventListener("click", e=>{
   if (e.target.tagName!=="BUTTON") return;
-  const flightId = e.target.dataset.id;
+  const flightNo = e.target.dataset.flightNo;
+  const dep = e.target.dataset.dep;
   // 실제 앱이라면 예약번호를 만들면서 서버에 POST하고 예약코드 반환
-  location.href = `mypage.html?code=${flightId}`;   // 데모용
+  location.href = `mypage.html?code=${flightNo}_${dep}`;   // 데모용
 });
 </script>
 </body></html>
