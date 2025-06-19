@@ -1,3 +1,4 @@
+# 항공기 좌석 관리 API 라우터입니다.
 from fastapi import APIRouter, Path, Depends
 from sqlalchemy.orm import Session
 

@@ -1,3 +1,4 @@
+# 인증 관련 의존성 함수를 정의합니다.
 # app/core/auth_deps.py
 from fastapi import Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session

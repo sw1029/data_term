@@ -1,3 +1,4 @@
+# 항공편 모델에 대한 CRUD 로직을 제공합니다.
 from datetime import date, datetime
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session, selectinload

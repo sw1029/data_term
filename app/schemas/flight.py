@@ -1,3 +1,4 @@
+# 항공편과 좌석 관련 스키마를 정의합니다.
 from datetime import datetime
 from pydantic import BaseModel
 from typing import List

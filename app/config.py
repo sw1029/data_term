@@ -1,3 +1,4 @@
+# 환경 설정값을 관리하는 모듈입니다.
 # app/config.py
 from functools import lru_cache
 from pydantic import BaseSettings, Field

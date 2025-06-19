@@ -1,3 +1,4 @@
+# 비밀번호 해시와 JWT 토큰 관련 기능을 제공합니다.
 from datetime import datetime, timedelta
 
 from fastapi import HTTPException

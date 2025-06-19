@@ -1,3 +1,4 @@
+# 좌석 가격 조정 및 조회를 위한 CRUD 함수들입니다.
 from datetime import datetime
 from sqlalchemy import update, select
 from sqlalchemy.orm import Session

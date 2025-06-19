@@ -1,3 +1,4 @@
+# 예약 및 취소 정보를 위한 모델을 정의합니다.
 from __future__ import annotations
 
 from datetime import datetime

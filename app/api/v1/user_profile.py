@@ -1,3 +1,4 @@
+# 사용자 프로필 및 예약 조회 API를 제공합니다.
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 

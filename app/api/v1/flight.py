@@ -1,3 +1,4 @@
+# 항공편 조회 관련 API를 제공합니다.
 from fastapi import APIRouter, Query, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime

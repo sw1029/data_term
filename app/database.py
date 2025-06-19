@@ -1,3 +1,4 @@
+# 데이터베이스 연결과 세션을 관리합니다.
 # app/database.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker

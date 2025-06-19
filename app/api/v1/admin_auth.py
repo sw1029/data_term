@@ -1,3 +1,4 @@
+# 관리자 인증을 처리하는 라우터 모듈입니다.
 # app/api/v1/admin_auth.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session

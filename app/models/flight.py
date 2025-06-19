@@ -1,3 +1,4 @@
+# 항공편과 좌석 정보를 나타내는 모델 정의입니다.
 from __future__ import annotations
 
 from datetime import datetime

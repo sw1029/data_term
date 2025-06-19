@@ -1,3 +1,4 @@
+# 예약 처리와 좌석 수 업데이트 로직을 다룹니다.
 from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.orm import Session

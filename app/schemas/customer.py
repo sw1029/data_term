@@ -1,3 +1,4 @@
+# 고객 데이터 입출력용 Pydantic 스키마입니다.
 # app/schemas/customer.py
 from pydantic import BaseModel, EmailStr
 

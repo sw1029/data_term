@@ -1,3 +1,4 @@
+# 관리자 계정 관련 데이터 접근 함수를 모아둡니다.
 # app/crud/admin.py
 from sqlalchemy.orm import Session
 from app.models.admin import Admin
