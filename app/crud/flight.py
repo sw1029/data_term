@@ -1,6 +1,6 @@
 # 항공편 모델에 대한 CRUD 로직을 제공합니다.
 from datetime import date, datetime
-from sqlalchemy import select, func
+from sqlalchemy import select, cast, Date
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.flight import Airplain
@@ -19,7 +19,7 @@ def search(db: Session, departure: str, arrival: str, dep_date: date):
         .where(
             Airplain.departureAirport == departure,
             Airplain.arrivalAirport == arrival,
-            func.trunc(Airplain.departureDateTime) == dep_date,
+            cast(Airplain.departureDateTime, Date) == dep_date,
         )
         .options(selectinload(Airplain.seats))
     )
