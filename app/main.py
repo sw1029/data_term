@@ -2,6 +2,7 @@
 # app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 from app.api.v1 import (
     customer,
     flight,
@@ -17,9 +18,15 @@ app = FastAPI(title="db_term API", version="0.1.0")
 
 # 로컬 개발 시 다른 포트에서 제공되는 정적 페이지에서 API를 호출할 수 있도록
 # CORS 정책을 완화합니다.
+origins_env = os.getenv("ALLOW_ORIGINS")
+if origins_env:
+    allow_origins = [o.strip() for o in origins_env.split(",") if o.strip()]
+else:
+    allow_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allow_origins,
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
