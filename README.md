@@ -97,7 +97,7 @@ c‑air/
 
 ```bash
 # 1. Clone
-$ git clone https://github.com/your‑org/c‑air.git && cd c‑air
+$ git clone https://github.com/sw1029/data_term && cd c‑air
 
 # 2. Back‑end
 $ python -m venv .venv && source .venv/bin/activate
