@@ -62,6 +62,14 @@ form.addEventListener("submit", async e => {
       `${fd.get("from")} → ${fd.get("to")} ${fd.get("depDate")}` +
       (fd.get("retDate") ? `~${fd.get("retDate")}`:"") +
       ` 성인${fd.get("adult")} ${fd.get("cls")||"전체"}`;
+
+    if (data.length === 0) {
+      resultBody.innerHTML =
+        '<tr><td colspan="9">검색 결과를 찾을 수 없습니다.</td></tr>';
+      resultSec.style.display = "block";
+      return;
+    }
+
     resultBody.innerHTML = data.map(row => {
       const dep = new Date(row.departureDateTime);
       const arr = new Date(row.arrivalDateTime);
