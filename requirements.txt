@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+SQLAlchemy>=2.0
+oracledb                  # cx_Oracle 대체, thin-mode 권장
+python-dotenv
+passlib[bcrypt]
+python-jose[cryptography] # JWT

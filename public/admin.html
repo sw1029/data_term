@@ -1,0 +1,99 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8" /><title>관리자 | 운항 관리</title>
+<link rel="stylesheet" href="css/styles.css" /></head>
+<body>
+<nav></nav>
+<main class="container">
+  <h2>항공편 목록</h2>
+  <form id="admSearch">
+    <label>항공사:
+      <select name="airline">
+        <option value="">전체</option><option>Sample Air</option><option>Demo Airlines</option>
+      </select>
+    </label>
+    <label>항공편명: <input type="text" name="flightNo"></label>
+    <label>출발일(From): <input type="date" name="from"></label>
+    <label>~ <input type="date" name="to"></label>
+    <button class="btn-primary">검색</button>
+    <button id="btnNewFlight" type="button">새 항공편 등록</button>
+  </form>
+
+  <table id="admTbl">
+    <thead><tr>
+      <th>항공사</th><th>항공편명</th><th>출발</th><th>도착</th>
+      <th>좌석관리</th><th>수정</th><th>삭제</th>
+    </tr></thead><tbody></tbody>
+  </table>
+
+  <h3 id="seatHdr" style="display:none"></h3>
+  <table id="seatTbl" style="display:none">
+    <thead><tr><th>좌석등급</th><th>가격</th><th>총 좌석 수</th><th>수정</th><th>삭제</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <button id="btnAddSeat" type="button" style="display:none">새 좌석 클래스 추가</button>
+</main>
+<footer>관리자 시스템 © C-AIR</footer>
+
+<script type="module">
+import { renderNav, apiFetch, fmtDateTime, fmtMoney } from "./js/common.js";
+renderNav(true);
+
+const admTblBody = document.querySelector("#admTbl tbody");
+const seatTbl    = document.getElementById("seatTbl");
+const seatHdr    = document.getElementById("seatHdr");
+const seatTBody  = seatTbl.querySelector("tbody");
+let currentFlightId;
+
+document.getElementById("admSearch").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const qs = new URLSearchParams(new FormData(e.target)).toString();
+  try {
+    const rows = await apiFetch(`/api/admin/flights?${qs}`); // ★
+    admTblBody.innerHTML = rows.map(r=>`
+      <tr data-id="${r.id}">
+        <td>${r.airline}</td><td>${r.flightNo}</td>
+        <td>${r.from} ${fmtDateTime(r.departureTime)}</td>
+        <td>${r.to} ${fmtDateTime(r.arrivalTime)}</td>
+        <td><button class="btn-primary btn-seat">관리</button></td>
+        <td><button class="btn-primary">수정</button></td>
+        <td><button class="btn-danger  btn-del">삭제</button></td>
+      </tr>`).join("");
+  } catch(err) { alert(err.message); }
+});
+
+/* 좌석관리 & 삭제 */
+admTblBody.addEventListener("click", async e=>{
+  const tr = e.target.closest("tr");
+  if (!tr) return;
+  const id = tr.dataset.id;
+  if (e.target.classList.contains("btn-seat")) {
+    currentFlightId = id;
+    loadSeats(id, tr.children[1].textContent);
+  } else if (e.target.classList.contains("btn-del")) {
+    if (confirm("삭제하시겠습니까?"))
+      await apiFetch(`/api/admin/flights/${id}`, { method:"DELETE" }); // ★
+    tr.remove();
+  }
+});
+
+async function loadSeats(flightId, flightNo) {
+  seatHdr.textContent = `${flightNo} 좌석 클래스 관리`;
+  seatHdr.style.display = seatTbl.style.display = "block";
+  document.getElementById("btnAddSeat").style.display = "inline-block";
+  const seats = await apiFetch(`/api/admin/flights/${flightId}/seats`); // ★
+  seatTBody.innerHTML = seats.map(s=>`
+    <tr data-id="${s.id}">
+      <td>${s.class}</td><td>${fmtMoney(s.price)}</td><td>${s.total}</td>
+      <td><button class="btn-primary">수정</button></td>
+      <td><button class="btn-danger btn-seat-del">삭제</button></td>
+    </tr>`).join("");
+}
+
+seatTBody.addEventListener("click", async e=>{
+  if (!e.target.classList.contains("btn-seat-del")) return;
+  const row = e.target.closest("tr");
+  await apiFetch(`/api/admin/flights/${currentFlightId}/seats/${row.dataset.id}`, { method:"DELETE" });
+  row.remove();
+});
+</script>
+</body></html>

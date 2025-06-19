@@ -1,0 +1,88 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8" /><title>C-AIR | 항공권 예매</title>
+<link rel="stylesheet" href="css/styles.css" /></head>
+<body>
+<nav></nav>
+<main class="container">
+  <h2>항공편 검색</h2>
+  <form id="searchForm">
+    <label>출발지: <input type="text" name="from" placeholder="서울/ICN" required></label>
+    <label>도착지: <input type="text" name="to" placeholder="뉴욕/JFK" required></label><br><br>
+    <label>출발일: <input type="date" name="depDate" required></label>
+    <label>귀국일: <input type="date" name="retDate"></label><br><br>
+    <label>성인:
+      <select name="adult" required>
+        ${[...Array(9)].map((_,i)=>`<option>${i+1}</option>`).join("")}
+      </select>
+    </label>
+    <label>소아:
+      <select name="child">${[...Array(10)].map((_,i)=>`<option>${i}</option>`).join("")}</select>
+    </label>
+    <label>유아:
+      <select name="infant">${[...Array(10)].map((_,i)=>`<option>${i}</option>`).join("")}</select>
+    </label>
+    <label>좌석 등급:
+      <select name="cls">
+        <option value="">전체</option><option>Economy</option><option>Business</option><option>First</option>
+      </select>
+    </label>
+    <button type="submit" class="btn-primary">검색하기</button>
+  </form>
+
+  <section id="resultSec" style="display:none">
+    <h3 id="condSummary"></h3>
+    <table id="resultTbl">
+      <thead><tr>
+        <th>항공사</th><th>항공편명</th><th>출발</th><th>도착</th><th>소요</th>
+        <th>좌석등급</th><th>가격</th><th>잔여좌석</th><th></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+<footer>ⓒ 2025 C-AIR. All rights reserved.</footer>
+
+<script type="module">
+import { renderNav, apiFetch, fmtMoney } from "./js/common.js";
+renderNav();
+
+const form = document.getElementById("searchForm");
+const resultSec  = document.getElementById("resultSec");
+const resultBody = document.querySelector("#resultTbl tbody");
+const condSummary = document.getElementById("condSummary");
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  const qs = new URLSearchParams(fd).toString();          // ?from=ICN&to=JFK ...
+  try {
+    const data = await apiFetch(`/api/flights/search?${qs}`); // ★백엔드 매핑
+    condSummary.textContent =
+      `${fd.get("from")} → ${fd.get("to")} ${fd.get("depDate")}` +
+      (fd.get("retDate") ? `~${fd.get("retDate")}`:"") +
+      ` 성인${fd.get("adult")} ${fd.get("cls")||"전체"}`;
+    resultBody.innerHTML = data.map(row => `
+      <tr>
+        <td>${row.airline}</td>
+        <td>${row.flightNo}</td>
+        <td>${row.departureTime}</td>
+        <td>${row.arrivalTime}</td>
+        <td>${row.duration}</td>
+        <td>${row.seatClass}</td>
+        <td>${fmtMoney(row.price)}</td>
+        <td>${row.remaining}</td>
+        <td><button data-id="${row.flightId}" class="btn-primary">선택</button></td>
+      </tr>`).join("");
+    resultSec.style.display = "block";
+  } catch(err) { alert(err.message); }
+});
+
+/* “선택” → 예약 페이지 이동 */
+resultBody.addEventListener("click", e=>{
+  if (e.target.tagName!=="BUTTON") return;
+  const flightId = e.target.dataset.id;
+  // 실제 앱이라면 예약번호를 만들면서 서버에 POST하고 예약코드 반환
+  location.href = `mypage.html?code=${flightId}`;   // 데모용
+});
+</script>
+</body></html>
