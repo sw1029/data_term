@@ -1,7 +1,8 @@
 # 환경 설정값을 관리하는 모듈입니다.
 # app/config.py
 from functools import lru_cache
-from pydantic import BaseSettings, Field
+from pydantic_settings import BaseSettings
+from pydantic import Field
 
 class Settings(BaseSettings):
     oracle_user: str = Field(..., env="ORACLE_USER")

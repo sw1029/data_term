@@ -11,4 +11,4 @@ class AdminOut(BaseModel):
     username: str
     is_super: bool
     class Config:
-        orm_mode = True
+        from_attributes = True
