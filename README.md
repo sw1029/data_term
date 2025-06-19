@@ -51,29 +51,27 @@
 ## 프로젝트 구조
 
 ```
-c‑air/
-├── backend/
-│   ├── main.py               # FastAPI 애플리케이션
-│   ├── config.py             # 설정 클래스
-│   ├── requirements.txt      # 파이썬 의존성 목록
-│   ├── extensions/           # JWT, DB, Marshmallow 초기화 모듈
-│   ├── models/               # SQLAlchemy 모델(Customer, Airplane, Seats 등)
-│   ├── schemas/              # marshmallow 스키마 <-> 모델 직렬화
-│   ├── api/                  # 라우터 모듈(auth, flights, bookings 등)
-│   ├── services/             # 비즈니스 로직(가격 계산, 좌석 배치, 결제)
-│   ├── tasks/                # 비동기/스케줄 작업(좌석 만료)
-│   └── migrations/           # Alembic 스크립트(자동 생성)
-├── frontend/
-│   ├── assets/
-│   │   ├── css/
-│   │   │   └── styles.css
-│   │   ├── img/
-│   │   └── js/
-│   │       └── main.js       # Fetch 래퍼와 DOM 헬퍼
-│   └── pages/
-│       ├── search.html       # 항공편 검색 (wireframe #1)
-│       ├── results.html      # 항공편 목록 & 여정 선택 (wireframe #2)
-│       └── booking.html      # 예약 상세 & 결제 (wireframe #3)
+data_term/
+├── app/
+│   ├── main.py              # FastAPI 연락 점
+│   ├── config.py            # 환경 설정
+│   ├── database.py          # SQLAlchemy 설정
+│   ├── api/
+│   │   └── v1/              # 라우터 모듈
+│   ├── models/              # 데이터 모델
+│   ├── schemas/             # Pydantic 스키마
+│   ├── crud/                # CRUD 로직
+│   └── core/                # 보안 의존성 모듈
+├── public/
+│   ├── index.html
+│   ├── admin.html
+│   ├── mypage.html
+│   ├── css/
+│   │   └── styles.css
+│   └── js/
+│       └── common.js
+├── example.sql             # 초기 SQL 예제
+├── requirements.txt        # Python 의존성
 └── README.md
 ```
 
@@ -94,23 +92,21 @@ c‑air/
 
 ```bash
 # 1. 저장소 클론
-$ git clone https://github.com/sw1029/data_term && cd c‑air
+$ git clone https://github.com/sw1029/data_term && cd data_term
 
-# 2. 백엔드
+# 2. 의존성 설치
 $ python -m venv .venv && source .venv/bin/activate
-(.venv) $ pip install -r backend/requirements.txt
+(.venv) $ pip install -r requirements.txt
 
-# 3. 프론트엔드(선택 사항)
-$ npm i -g esbuild       # 또는 pnpm/yarn
-$ cd frontend && npm install && cd ..
-
-# 4. 환경 변수 설정
-$ cp backend/.env.example backend/.env   # 값 수정
+# 3. 환경 변수 파일 생성
+$ touch .env   # 아래 표를 참고해 값을 입력
 ```
 
 ---
 
 ## 환경 변수
+
+프로젝트 루트에 `.env` 파일을 생성하고 아래 변수들을 설정합니다.
 
 | 변수 | 예시 | 설명 |
 | --- | --- | --- |
@@ -121,7 +117,7 @@ $ cp backend/.env.example backend/.env   # 값 수정
 | `JWT_SECRET` | `example_secret` | 액세스 토큰 서명용 256비트 비밀 값 |
 | `ADMIN_EMAIL` | `admin@c‑air.io` | 기본 관리자 계정 이메일 |
 
-더 많은 설정 항목은 `backend/config.py`에서 확인할 수 있습니다.
+더 많은 설정 항목은 `app/config.py`에서 확인할 수 있습니다.
 
 ---
 
